@@ -1,0 +1,6 @@
+# Base
+dialog
+apt-utils
+localepurge
+ca-certificates
+apt-transport-https

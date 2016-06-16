@@ -1,0 +1,11 @@
+*.img
+*.img.xz
+/pine64-image-debianmate-*
+/build/
+/resources/u-boot/
+/resources/arm-trusted-firmware/
+/resources/linux/
+/resources/sunxi-pack-tools/
+/resources/boot0.bin
+/resources/scp.bin
+/resources/sys_config.fex

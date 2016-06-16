@@ -1,0 +1,36 @@
+# Base
+udev
+netbase
+net-tools
+rsyslog
+logrotate
+cron
+anacron
+locales
+rsync
+libpam-systemd
+initramfs-tools
+virtualbox-guest-dkms/jessie-backports
+avahi-daemon
+libnss-mdns
+
+# Kernel and boot
+grub2
+linux-image-amd64/jessie-backports
+linux-headers-amd64/jessie-backports
+
+# Network
+ifupdown
+iproute
+iptables
+isc-dhcp-client
+
+# Services
+openssh-server
+
+# Cozy
+nginx-light
+sendmail
+python-cozy-management
+cozy-apt-node-list
+cozy-depends

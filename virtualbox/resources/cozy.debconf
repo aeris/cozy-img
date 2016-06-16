@@ -1,0 +1,3 @@
+cozy-standalone cozy/certificate_type string selfsigned
+cozy-standalone cozy/fqdn string cozy.local
+cozy-standalone cozy/certificate string

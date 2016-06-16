@@ -1,0 +1,29 @@
+# Base
+udev
+netbase
+net-tools
+rsyslog
+logrotate
+cron
+anacron
+locales
+kmod
+fake-hwclock
+rsync
+libpam-systemd
+initramfs-tools
+
+# Network
+ifupdown
+iproute
+iptables
+isc-dhcp-client
+
+# Services
+openssh-server
+
+# rpi-update
+curl
+ca-certificates
+binutils
+kmod

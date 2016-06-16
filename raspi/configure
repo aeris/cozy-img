@@ -1,0 +1,29 @@
+export LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_MESSAGES=POSIX DEBIAN_FRONTEND=noninteractive
+locale-gen
+update-locale
+apt-key update
+
+# Prohibit services to start during install
+cat > /usr/sbin/policy-rc.d <<EOF
+#!/bin/sh
+exit 101
+EOF
+chmod +x /usr/sbin/policy-rc.d
+
+echo 'Acquire::http { Proxy "http://localhost:3142"; }' > /etc/apt/apt.conf.d/00proxy
+echo 'Dpkg::Options { "--force-confdef"; "--force-confold"; }' > /etc/apt/apt.conf.d/00dpkg
+rm -f /etc/apt/sources.list
+
+apt update
+apt dist-upgrade -y
+egrep -v '^(#|//|$$)' /tmp/packages | xargs apt install -y
+localepurge
+
+echo root:root | /usr/sbin/chpasswd
+
+rpi-update
+
+rm -f /usr/sbin/policy-rc.d
+find /var/cache/apt/archives -type f -name "*.deb" -delete
+rm -f /etc/apt/apt.conf.d/{00proxy,00dpkg}
+find /var/log -type f -delete

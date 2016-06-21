@@ -10,14 +10,17 @@ locales
 rsync
 libpam-systemd
 initramfs-tools
-virtualbox-guest-dkms/jessie-backports
 avahi-daemon
 libnss-mdns
+console-setup
+console-data
+keyboard-configuration
+vim
+less
+nano
 
 # Kernel and boot
 grub2
-linux-image-amd64/jessie-backports
-linux-headers-amd64/jessie-backports
 
 # Network
 ifupdown

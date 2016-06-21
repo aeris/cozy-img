@@ -1,0 +1,9 @@
+#!/usr/bin/expect -f
+spawn systemd-nspawn -M cozy-virtualbox -D build/rootfs/ -b
+expect "login: "
+send "root\r"
+expect "Password: "
+send "root\r"
+expect "root@*:~#"
+send "/var/tmp/configure\r"
+interact

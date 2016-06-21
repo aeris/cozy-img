@@ -1,0 +1,13 @@
+[Unit]
+Description=Clean
+ConditionPathExists=/var/tmp/firstboot
+After=couchdb.service
+Before=nginx.service ssh.service supervisor.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/reset-on-first-boot
+
+[Install]
+WantedBy=multi-user.target

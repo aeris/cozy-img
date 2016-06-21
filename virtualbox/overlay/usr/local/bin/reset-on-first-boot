@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Renew all SSH host keys
+yes | ssh-keygen -q -N '' -t rsa     -b 4096 -f /etc/ssh/ssh_host_rsa_key
+yes | ssh-keygen -q -N '' -t ecdsa   -b 521  -f /etc/ssh/ssh_host_ecdsa_key
+yes | ssh-keygen -q -N '' -t ed25519         -f /etc/ssh/ssh_host_ed25519_key
+
+# Renew all TLS keys and certs
+openssl ecparam -genkey -name secp256r1 -out /etc/cozy/certs/cozy.local.key
+openssl req -new -key /etc/cozy/certs/cozy.local.key -out /etc/cozy/certs/cozy.local.csr -subj "/CN=cozy.local"
+openssl req -x509 -key /etc/cozy/certs/cozy.local.key -in /etc/cozy/certs/cozy.local.csr -out /etc/cozy/certs/cozy.local.crt
+chown www-data:www-data /etc/cozy/certs/cozy.local.{key,csr,crt}
+
+cozy_management reset_token
+
+rm -f /var/tmp/firstboot

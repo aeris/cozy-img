@@ -19,22 +19,21 @@ sed -i s/https:/http:/ /etc/apt/sources.list.d/*
 
 apt update
 apt dist-upgrade -y
-egrep -v '^(#|//|$$)' /tmp/configure.packages | xargs apt install -y
+egrep -v '^(#|//|$$)' /var/tmp/configure.packages | xargs apt install -y
+apt install -y linux-image-amd64 linux-headers-amd64 virtualbox-guest-dkms -t jessie-backports
+
 rm -f /etc/apt/sources.list.d/*.ucf-dist
 localepurge
 
+systemctl enable firstboot
+
 rm -f /usr/sbin/policy-rc.d
-echo root:root | /usr/sbin/chpasswd
 
-debconf-set-selections < /tmp/cozy.debconf
-/etc/init.d/couchdb start
-/etc/init.d/supervisor start
+debconf-set-selections < /var/tmp/cozy.debconf
+systemctl start couchdb supervisor
 apt install -y cozy cozy-nginx
-/etc/init.d/supervisor stop
-/etc/init.d/couchdb stop
+systemctl stop supervisor couchdb
 
-find /var/cache/apt/archives -type f -delete
-rm -f /etc/apt/apt.conf.d/{00proxy,00dpkg}
-find /var/log -type f -delete
-rm -f build/rootfs/etc/ssh/ssh_host_*_key*
-rm -rf /tmp/*
+find /var/cache/apt/ /var/log/ -type f -delete
+rm -rf /etc/apt/apt.conf.d/{00proxy,00dpkg} /etc/apt/sources.list.d/*.ucf-dist /tmp/* /var/tmp/*
+poweroff

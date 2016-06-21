@@ -1,3 +1,5 @@
 /resources/cozy.gpg
+/resources/nodesource.gpg
 /overlay/etc/apt/trusted.gpg.d/cozy.gpg
+/overlay/etc/apt/trusted.gpg.d/nodesource.gpg
 /build/

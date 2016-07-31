@@ -3,8 +3,9 @@ DEBIAN_RELEASE := jessie
 IMG_SIZE ?= 10G
 IMG_VERSION := 4.0.1
 RSYNC := rsync -ahxAHX --info=progress2 --numeric-ids --inplace
+GPG_KEY := 0xEFB74277ECE4E222
 
-.DEFAULT_GOAL := xz
+.DEFAULT_GOAL := gpg
 MAKEFLAGS += --no-builtin-rules
 unexport MAKEFLAGS
 SHELL := /bin/bash
@@ -157,11 +158,12 @@ vbox: build/cozy/cozy.vbox
 
 build/cozy-virtualbox_$(IMG_VERSION).tar.xz: build/cozy/cozy.vbox build/cozy/cozy.vdi
         tar -C build -I "pxz -9e -k -T8" -cvf $@ cozy
-build/cozy-virtualbox_$(IMG_VERSION).tar.xz.sha512: build/cozy-virtualbox_$(IMG_VERSION).tar.xz
-        sha512sum -b $^ | sed s@build/@@ > $@
+%.sha512: %
+        sha512sum -b $< | sed s@build/@@ > $@
 xz: build/cozy-virtualbox_$(IMG_VERSION).tar.xz.sha512
-gpg:
-        gpg2 -b build/cozy-virtualbox_$(IMG_VERSION).tar.xz.sha512
+%.asc: %
+        gpg2 -u $(GPG_KEY) -b $<
+gpg: build/cozy-virtualbox_$(IMG_VERSION).tar.xz.sha512.asc
 
 chroot: | build/rootfs/
         echo 'Acquire::http::Proxy "http://localhost:3142";' > build/rootfs/etc/apt/apt.conf.d/00proxy

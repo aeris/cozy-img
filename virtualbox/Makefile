@@ -1,6 +1,6 @@
 DEBIAN_REPOSITORY := http://localhost:3142/http.debian.net/debian/
 DEBIAN_RELEASE := jessie
-IMG_SIZE ?= 4G
+IMG_SIZE ?= 10G
 RSYNC := rsync -ahxAHX --info=progress2 --numeric-ids --inplace
 
 .DEFAULT_GOAL := xz

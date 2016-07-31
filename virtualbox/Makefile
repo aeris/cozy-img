@@ -21,12 +21,12 @@ dev:
 
 	apt install -y debootstrap rsync apt-cacher-ng parted secure-delete pv pxz wget kpartx apt-transport-https linux-image-amd64 linux-headers-amd64 virtualbox expect systemd-container gnupg2 qemu-utils
 
-        $(MAKE) resources
+	$(MAKE) resources
 
 sync:
-        $(RSYNC) --delete --exclude-from .exclude . cozy-dev.local:img/virtualbox/
+	$(RSYNC) -P --delete --exclude-from .exclude . cozy-dev.local:img/virtualbox/
 desync: sync
-        $(RSYNC) cozy-dev.local:img/virtualbox/ .
+	$(RSYNC) cozy-dev.local:img/virtualbox/ .
 
 build/ build/root/ build/cozy/:
 	mkdir -p "$@"
@@ -138,35 +138,35 @@ img_sync:
 	$(RSYNC) --delete --exclude /boot/ build/rootfs/ build/root/
 	umount build/root/
 	kpartx -d $(LOOP_DEVICE)
-        losetup -d $(LOOP_DEVICE)
+	losetup -d $(LOOP_DEVICE)
 build/cozy/cozy.vdi: build/cozy.img | build/cozy/
-        rm -f $@
-        vboxmanage convertdd $^ $@ --format VDI --variant Standard --uuid 35c5efaa-bb9a-4546-afea-47f6143782cc
+	rm -f $@
+	vboxmanage convertdd $< $@ --format VDI --variant Standard --uuid 35c5efaa-bb9a-4546-afea-47f6143782cc
 vdi: build/cozy/cozy.vdi
 vdi_mount: build/cozy/cozy.vdi | build/root/
-        qemu-nbd -c /dev/nbd0 build/cozy/cozy.vdi
+	qemu-nbd -c /dev/nbd0 build/cozy/cozy.vdi
 	kpartx -as /dev/nbd0
 	mount /dev/mapper/nbd0p1 build/root/
 vdi_umount:
 	-umount build/root/
 	-kpartx -d /dev/nbd0
-        -qemu-nbd -d /dev/nbd0
+	-qemu-nbd -d /dev/nbd0
 
 build/cozy/cozy.vbox: resources/cozy.vbox | build/cozy/
-        cp $^ $@
+	cp $< $@
 vbox: build/cozy/cozy.vbox
 
 build/cozy-virtualbox_$(IMG_VERSION).tar.xz: build/cozy/cozy.vbox build/cozy/cozy.vdi
-        tar -C build -I "pxz -9e -k -T8" -cvf $@ cozy
+	tar -C build -I "pxz -9e -k -T8" -cvf $@ cozy
 %.sha512: %
-        sha512sum -b $< | sed s@build/@@ > $@
+	sha512sum -b $< | sed s@build/@@ > $@
 xz: build/cozy-virtualbox_$(IMG_VERSION).tar.xz.sha512
 %.asc: %
-        gpg2 -u $(GPG_KEY) -b $<
+	gpg2 -u $(GPG_KEY) -b $<
 gpg: build/cozy-virtualbox_$(IMG_VERSION).tar.xz.sha512.asc
 
 chroot: | build/rootfs/
-        echo 'Acquire::http::Proxy "http://localhost:3142";' > build/rootfs/etc/apt/apt.conf.d/00proxy
+	echo 'Acquire::http::Proxy "http://localhost:3142";' > build/rootfs/etc/apt/apt.conf.d/00proxy
 
 	-LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 systemd-nspawn -M cozy-virtualbox -D build/rootfs/ -b
 

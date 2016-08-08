@@ -1,0 +1,46 @@
+#!/bin/bash
+set -e
+export LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_MESSAGES=POSIX DEBIAN_FRONTEND=noninteractive
+locale-gen
+update-locale
+apt-key update
+
+# Prohibit services to start during install
+cat > /usr/sbin/policy-rc.d <<EOF
+#!/bin/sh
+exit 101
+EOF
+chmod +x /usr/sbin/policy-rc.d
+
+echo 'Acquire::http { Proxy "http://localhost:3142"; }' > /etc/apt/apt.conf.d/00proxy
+echo 'Dpkg::Options { "--force-confdef"; "--force-confold"; }' > /etc/apt/apt.conf.d/00dpkg
+rm -f /etc/apt/sources.list
+sed -i s/https:/http:/ /etc/apt/sources.list.d/*
+
+apt update
+apt dist-upgrade -y
+egrep -v '^(#|//|$$)' /var/tmp/configure.packages | xargs apt install -y
+
+rm -f /etc/apt/sources.list.d/*.ucf-dist
+localepurge
+
+systemctl enable firstboot
+
+rpi-update
+
+rm -f /usr/sbin/policy-rc.d
+
+debconf-set-selections < /var/tmp/cozy.debconf
+# systemctl start couchdb supervisor
+# # Es ist marabu
+# npm config set unsafe-perm true
+# apt install -y cozy cozy-nginx
+# # Es ist nicht marabu
+# npm config set unsafe-perm false
+# systemctl stop supervisor couchdb
+
+date -u '+%Y-%m-%d %H:%M:%S' > /etc/fake-hwclock.data
+
+find /var/cache/apt/ /var/log/ -type f -delete
+rm -rf /etc/apt/apt.conf.d/{00proxy,00dpkg} /etc/apt/sources.list.d/*.ucf-dist /tmp/* /var/tmp/*
+poweroff

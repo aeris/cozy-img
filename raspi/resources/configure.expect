@@ -1,0 +1,10 @@
+#!/usr/bin/expect -f
+set timeout 60
+spawn systemd-nspawn -M cozy-raspi --bind-ro=/usr/bin/qemu-arm-static -D build/rootfs/ -b
+expect "login: "
+send "root\r"
+expect "Password: "
+send "root\r"
+expect "root@*:~#"
+send "/var/tmp/configure\r"
+interact

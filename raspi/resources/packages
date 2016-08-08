@@ -2,3 +2,4 @@
 dialog
 apt-utils
 localepurge
+apt-transport-https

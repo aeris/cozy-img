@@ -10,8 +10,13 @@ locales
 kmod
 fake-hwclock
 rsync
+avahi-daemon
+libnss-mdns
 libpam-systemd
 initramfs-tools
+vim
+less
+nano
 
 # Network
 ifupdown
@@ -27,3 +32,10 @@ curl
 ca-certificates
 binutils
 kmod
+
+# Cozy
+nginx-light
+sendmail
+python-cozy-management
+cozy-apt-node-list
+cozy-depends
